@@ -1,5 +1,5 @@
 # AOPD
 Accelerated Computing in Data Processing - Project
 
-Documentation: <https://www.overleaf.com/read/jwnqhzvtkfsm>
+Project report: <https://www.overleaf.com/read/jwnqhzvtkfsm>
 
