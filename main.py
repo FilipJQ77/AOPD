@@ -92,25 +92,13 @@ def calculate_quantiles(y_array):
     return y_array
 
 
-def main():
+def run_calculations(calculation_type: int, number_from: float, number_to: float, number_of_samples: int,
+                     function_type: int, repetitions: int, show_plot: bool, filename: str):
     # warning suppression https://stackoverflow.com/a/63598551
     os.environ["QT_DEVICE_PIXEL_RATIO"] = "0"
     os.environ["QT_AUTO_SCREEN_SCALE_FACTOR"] = "1"
     os.environ["QT_SCREEN_SCALE_FACTORS"] = "1"
     os.environ["QT_SCALE_FACTOR"] = "1"
-
-    calculation_type = int(sys.argv[1])
-    number_from = float(sys.argv[2])
-    number_to = float(sys.argv[3])
-    number_of_samples = int(sys.argv[4])
-    function_type = int(sys.argv[5])
-    repetitions = int(sys.argv[6])
-    show_plot = int(sys.argv[7])
-    filename = sys.argv[8]
-    if show_plot != 0:
-        show_plot = True
-    else:
-        show_plot = False
 
     math_function = linear_function  # default function
     function_str = "x * 2"
@@ -203,6 +191,24 @@ def main():
                 f"{y_array_time};"
                 f"{plot_time}"
                 f"\n")
+
+
+def main():
+    calculation_type = int(sys.argv[1])
+    number_from = float(sys.argv[2])
+    number_to = float(sys.argv[3])
+    number_of_samples = int(sys.argv[4])
+    function_type = int(sys.argv[5])
+    repetitions = int(sys.argv[6])
+    show_plot = int(sys.argv[7])
+    filename = sys.argv[8]
+    if show_plot != 0:
+        show_plot = True
+    else:
+        show_plot = False
+
+    run_calculations(calculation_type, number_from, number_to, number_of_samples,
+                     function_type, repetitions, show_plot, filename)
 
 
 if __name__ == '__main__':
