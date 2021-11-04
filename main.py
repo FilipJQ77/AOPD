@@ -1,16 +1,16 @@
-from time import perf_counter_ns as timer
+import statistics
 from abc import ABC, abstractmethod
 from math import sin, cos, inf
-from numpy import linspace
+from time import perf_counter_ns as timer
+
 import matplotlib.pyplot as plt
-# import statistics
-
-
-import pycuda.gpuarray as gpuarray
 import pycuda.cumath as cumath
-import pycuda.driver as cuda
-import pycuda.autoinit
-from pycuda.compiler import SourceModule
+import pycuda.gpuarray as gpuarray
+from numpy import linspace
+
+# import pycuda.driver as cuda
+# import pycuda.autoinit
+# from pycuda.compiler import SourceModule
 
 function = "sin(x) + 2 * cos(x) ** 2 - x"  # variable with function for .csv file
 
@@ -29,7 +29,8 @@ class NaiveCalculator(Calculator):
     def calculate(self, x_points, number_of_samples):
         y_points = [0] * number_of_samples
         for i in range(number_of_samples):
-            y_points[i] = math_function(x_points[i])
+            self.function = math_function(x_points[i])
+            y_points[i] = self.function
         return y_points
 
 
@@ -58,6 +59,19 @@ class AcceleratedCalculator(Calculator):
         return y_points
 
 
+#  ##  Additional  ##
+def calculate_quantiles(y_array):
+    quantile_number = int(input("Quantile number (0 if no quantiles): "))
+    if quantile_number >= 1:
+        quantiles = statistics.quantiles(y_array, n=quantile_number)
+        for i in range(len(y_array)):
+            if y_array[i] < quantiles[0]:
+                y_array[i] = inf
+            if y_array[i] > quantiles[len(quantiles) - 1]:
+                y_array[i] = inf
+    return y_array
+
+
 def main():
     calculation_type = int(input("1. Naive\n2. Accelerated\n"))
     if calculation_type == 1:
@@ -70,31 +84,24 @@ def main():
     number_from = float(input("Number from: "))
     number_to = float(input("Number to: "))
     number_of_samples = int(input("Number of samples: "))
-    # ## Additional ##
-    # quantile_number = int(input("Quantile number (0 if no quantiles): "))
+
     x_time_start = timer()
     x_array = linspace(number_from, number_to, number_of_samples)
     x_time_stop = timer()
+
     y_time_start = timer()
     y_array = calculator.calculate(x_array, number_of_samples)
     y_time_stop = timer()
 
-    #  ##  Additional  ##
-    # if quantile_number >= 1:
-    #     quantiles = statistics.quantiles(y_array, n=quantile_number)
-    #     for i in range(len(y_array)):
-    #         if y_array[i] < quantiles[0]:
-    #             y_array[i] = inf
-    #         if y_array[i] > quantiles[len(quantiles) - 1]:
-    #             y_array[i] = inf
-
     plot_time_start = timer()
     plt.plot(x_array, y_array)
     plot_time_stop = timer()
+
     x_array_time = x_time_stop - x_time_start
     y_array_time = y_time_stop - y_time_start
     plot_time = plot_time_stop - plot_time_start
-    # plt.waitforbuttonpress()
+
+    # plt.waitforbuttonpress()  # display plot
     with open("results.csv", 'a') as file:
         file.write(
             f"{'Naive' if calculation_type == 1 else 'Accelerated'};\t"
@@ -106,6 +113,8 @@ def main():
             f"{y_array_time};\t"
             f"{plot_time};\t"
             f"\n")
+
+        # create header for new file
         # file.write(f"math_function;number_from;number_to;number_of_samples;x_array_time;y_array_time;plot_time")
 
 
