@@ -148,6 +148,10 @@ def run_calculations(calculation_type: int, number_from: float, number_to: float
     else:
         return
 
+    x_array_time = []
+    y_array_time = []
+    plot_time = []
+
     for _ in range(repetitions):
         x_time_start = timer()
         x_array = np.linspace(number_from, number_to, number_of_samples)
@@ -163,36 +167,40 @@ def run_calculations(calculation_type: int, number_from: float, number_to: float
         plt.plot(x_array, y_array)
         plot_time_stop = timer()
 
-        x_array_time = x_time_stop - x_time_start
-        y_array_time = y_time_stop - y_time_start
-        plot_time = plot_time_stop - plot_time_start
+        x_array_time.append(x_time_stop - x_time_start)
+        y_array_time.append(y_time_stop - y_time_start)
+        plot_time.append(plot_time_stop - plot_time_start)
 
         if show_plot:
             plt.waitforbuttonpress()  # display plot
 
-        # create header for new file
-        with open(filename, 'a') as file:
-            if os.stat(file.name).st_size == 0:
-                file.write(
-                    "Implementation;"
-                    "Math function;"
-                    "Number from;"
-                    "Number to;"
-                    "Number of samples;"
-                    "Time - Creating x array;"
-                    "Time - Calculating y array;"
-                    "Time - Plotting results"
-                    "\n")
+    x_array_time = statistics.mean(x_array_time)
+    y_array_time = statistics.mean(y_array_time)
+    plot_time = statistics.mean(plot_time)
+
+    # create header for new file
+    with open(filename, 'a') as file:
+        if os.stat(file.name).st_size == 0:
             file.write(
-                f"{'Naive      ' if calculation_type == 1 else 'Accelerated'};"
-                f"{function_str};"
-                f"{number_from};"
-                f"{number_to};"
-                f"{number_of_samples};"
-                f"{x_array_time};"
-                f"{y_array_time};"
-                f"{plot_time}"
-                f"\n")
+                "Implementation;"
+                "Math function;"
+                "Number from;"
+                "Number to;"
+                "Number of samples;"
+                "Time - Creating x array;"
+                "Time - Calculating y array;"
+                "Time - Plotting results"
+                "\n")
+        file.write(
+            f"{'Naive' if calculation_type == 1 else 'Accelerated'};"
+            f"{function_str};"
+            f"{number_from};"
+            f"{number_to};"
+            f"{number_of_samples};"
+            f"{x_array_time};"
+            f"{y_array_time};"
+            f"{plot_time}"
+            f"\n")
 
 
 def main():
