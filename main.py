@@ -37,7 +37,9 @@ def exponential_function_naive(x: float) -> float:
 
 
 def exponential_function_accelerated(x: gpuarray) -> gpuarray:
-    return cumath.exp(x) + math.pi ** (x / 2 - 10)
+    # return cumath.exp(x) + math.pi ** (x / 2 - 10) # this doesn't work
+    # pi^(x/2 - 10) = e^[(x/2-10)*log(math.pi)]
+    return cumath.exp(x) + cumath.exp((x / 2 - 10) * math.log(math.pi))
 
 
 def logarithmic_function_naive(x: float) -> float:
