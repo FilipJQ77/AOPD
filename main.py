@@ -16,11 +16,11 @@ def linear_function(x):
     return x * 2
 
 
-def polynomial_function_naive(x):
+def polynomial_function_naive(x: float) -> float:
     return x ** 5 - 8 * x ** 4 + 3 * x ** 3 - 20 * x ** 2 - 1729 * x + math.sqrt(x) + 42069
 
 
-def polynomial_function_accelerated(x):
+def polynomial_function_accelerated(x: gpuarray) -> gpuarray:
     return x ** 5 - 8 * x ** 4 + 3 * x ** 3 - 20 * x ** 2 - 1729 * x + cumath.sqrt(x) + 42069
 
 
@@ -66,7 +66,7 @@ class Calculator(ABC):
 
 class NaiveCalculator(Calculator):
     def calculate(self, x_points, math_function, number_of_samples):
-        y_points = np.zeros(number_of_samples, dtype=np.float64)
+        y_points = np.empty(number_of_samples, dtype=np.float64)
         for i in range(number_of_samples):
             y_points[i] = math_function(x_points[i])
         return y_points
