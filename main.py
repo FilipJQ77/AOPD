@@ -75,10 +75,8 @@ class NaiveCalculator(Calculator):
 class AcceleratedCalculator(Calculator):
     def calculate(self, x_points, math_function, number_of_samples):
         # CUDA magic
-        y_points = np.zeros(number_of_samples, dtype=np.float64)
         x_array_gpu = gpuarray.to_gpu(x_points)
-        math_function(x_array_gpu).get(y_points)
-        return y_points
+        return math_function(x_array_gpu).get()
 
 
 # optional: removing the highest and the lowest points if the plot is flat because of them
